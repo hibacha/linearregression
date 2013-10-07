@@ -7,10 +7,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Vector;
 
 public class KCrossValidation {
 
+	public ArrayList<Vector<Double>> getRandomTrainingData(){
+	      ArrayList<Vector<Double>> result=new ArrayList<Vector<Double>>();
+	      Random r=new Random();
+	      int initSize = trainingData.size();
+	      for(int i=0;i<initSize;i++){
+	    	  int size=trainingData.size();
+	    	  int randomIndex=r.nextInt(size);
+	    	  result.add(trainingData.remove(randomIndex));
+	      }
+	      
+	      trainingData=result;
+	      System.out.println(trainingData.size());
+	      return trainingData;
+	      
+	}
+	
 	public ArrayList<Vector<Double>> getTrainingData() {
 		return trainingData;
 	}
