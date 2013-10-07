@@ -29,7 +29,7 @@ public class Zscore {
 		kcross.extractTestingSetByIndex(-1);
 		
 		Zscore zscore = new Zscore();
-		ArrayList<Vector<Double>> trainingSet = kcross.getTrainingData();
+		ArrayList<Vector<Double>> trainingSet = kcross.getRandomTrainingData();
 		zscore.calculateMean(trainingSet);
 		zscore.calculateSD(trainingSet);
 		
@@ -85,7 +85,19 @@ public class Zscore {
 		}
 		
 	}
-	
+	public ArrayList<Vector<Double>> getNormalizedData(ArrayList<Vector<Double>> unnormalized){
+		ArrayList<Vector<Double>> normalizedSet= new ArrayList<Vector<Double>>();
+		for(Vector<Double> mail:unnormalized){
+		    Vector<Double> normalizedMail= new Vector<Double>();
+			for(int i=0;i<57;i++){
+		         normalizedMail.add(getZscoreForX(mail.get(i), means[i], sd[i]));
+		    }
+			//add spam label
+			normalizedMail.add(mail.get(57));
+			normalizedSet.add(normalizedMail);
+		}
+		return normalizedSet;
+	}
 	public double getZscoreForX(double x, double mui, double fai){
 		return (x-mui)/fai;
 		
