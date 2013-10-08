@@ -16,6 +16,7 @@ public class KCrossValidation {
 	      ArrayList<Vector<Double>> result=new ArrayList<Vector<Double>>();
 	      Random r=new Random();
 	      int initSize = trainingData.size();
+	      System.out.println(initSize);
 	      for(int i=0;i<initSize;i++){
 	    	  int size=trainingData.size();
 	    	  int randomIndex=r.nextInt(size);
@@ -23,7 +24,7 @@ public class KCrossValidation {
 	      }
 	      
 	      trainingData=result;
-	      System.out.println(trainingData.size());
+	      System.out.println("Kcross"+trainingData.size());
 	      return trainingData;
 	      
 	}

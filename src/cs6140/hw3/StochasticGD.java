@@ -11,8 +11,8 @@ public class StochasticGD {
 	 */
 	private double[] weight = new double[57];
 	private double[] newWeight = new double[57];
-	private double alfa = 0.01;
-
+	private ArrayList<Vector<Double>> normalizedSet;
+	
 	public double[] getNewWeight() {
 		return newWeight;
 	}
@@ -39,7 +39,7 @@ public class StochasticGD {
 
 	private boolean isConverge(double theta1, double theta2) {
 		System.out.println(Math.abs(theta1 - theta2));
-		return Math.abs(theta1 - theta2) < 0.01;
+		return Math.abs(theta1 - theta2) < 0.002;
 	}
 	private boolean isConvergeForAll(){
 		boolean result=true;
@@ -51,24 +51,27 @@ public class StochasticGD {
 		}
 		return result;
 	}
-	public void trainData(ArrayList<Vector<Double>> trainingSet) {
+	private void initWeight(){
+		weight = new double[57];
+		newWeight = new double[57];
+	}
+	public void trainData(double alpha) {
+		initWeight();
 		boolean isConverge = false;
 		while (!isConverge) {
-			weight = Arrays.copyOf(newWeight, 57);
-
-			for (Vector<Double> mail : trainingSet) {
+			for (Vector<Double> mail : normalizedSet) {
+				weight = Arrays.copyOf(newWeight, 57);
 				for (int j = 0; j < 57; j++) {
 					double diff= mail.get(57) - h(weight, mail);
-					newWeight[j] = weight[j] + alfa
+					newWeight[j] = weight[j] + alpha
 							* diff * mail.get(j);
 				}
-				isConverge= isConvergeForAll();
 			}
+			isConverge= isConvergeForAll();
 		}
 	}
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public void prepareTrainingDataSet(){
 		KCrossValidation kcross=new KCrossValidation(1);
 		kcross.extractTestingSetByIndex(-1);
 		ArrayList<Vector<Double>> overallDataSet = kcross.getTrainingData();
@@ -79,16 +82,28 @@ public class StochasticGD {
 		KCrossValidation kcross2=new KCrossValidation(10);
 		kcross2.extractTestingSetByIndex(0);
 		ArrayList<Vector<Double>> partionedSet = kcross2.getRandomTrainingData();
-		ArrayList<Vector<Double>> normalizedSet = zscore.getNormalizedData(partionedSet);
+		normalizedSet = zscore.getNormalizedData(partionedSet);
+	}
+	
+	public double jw(){
+		double sum=0;
+		for(Vector<Double> mail: normalizedSet){
+		   sum+=Math.pow(h(newWeight, mail)-mail.get(57),2);
+		}
+		return Math.sqrt(sum/normalizedSet.size());
+	}
+	
+	public static void main(String[] args) {
 		
 		StochasticGD sgd=new StochasticGD();
-		sgd.trainData(normalizedSet);
+		sgd.prepareTrainingDataSet();
+		sgd.trainData(0.001);
 		
 		System.out.print("@@@@@@@@@");
 		for(double a:sgd.getNewWeight()){
 			System.out.println("weight:"+a);
 		}
-		
+	    System.out.println(sgd.jw());	
 		
 	}
 
