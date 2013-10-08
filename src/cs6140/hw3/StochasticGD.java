@@ -58,7 +58,8 @@ public class StochasticGD {
 	public void trainData(double alpha) {
 		initWeight();
 		boolean isConverge = false;
-		while (!isConverge) {
+		int k=10;
+		while (k-->0) {
 			for (Vector<Double> mail : normalizedSet) {
 				weight = Arrays.copyOf(newWeight, 57);
 				for (int j = 0; j < 57; j++) {
@@ -67,7 +68,9 @@ public class StochasticGD {
 							* diff * mail.get(j);
 				}
 			}
-			isConverge= isConvergeForAll();
+			double rmse=jw();
+			System.out.println(rmse);
+//			isConverge= isConvergeForAll();
 		}
 	}
 
