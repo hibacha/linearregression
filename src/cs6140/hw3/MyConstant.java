@@ -5,6 +5,7 @@ import java.util.List;
 
 public final class MyConstant {
 
+	public static final Integer SIZE_OF_NORMALIZED_FEATURE=58;
 	public static final Integer NUMS_FOLDS = 10;
 	public static final String  DATA_PATH="/Users/zhouyf/Stack/machine learning/homework/hw2/spambase/spambase.data";
     public static List<Double> OVERALLMEANARRAYLIST=Arrays.asList(
