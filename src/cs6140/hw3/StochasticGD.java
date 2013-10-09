@@ -9,15 +9,15 @@ import java.util.Vector;
 
 
 
-public class StochasticGD {
+public class StochasticGD extends GradientDescent{
 
 	/**
 	 * @param args
 	 */
 	private double[] weight = new double[57];
 	private double[] newWeight = new double[57];
-	private ArrayList<Vector<Double>> normalizedSet;
-	private ArrayList<Vector<Double>> testDataSet;
+	private ArrayList<Email> normalizedSet;
+	private ArrayList<Email> testDataSet;
 	private Zscore zscore;
 	List<Point> plotPoints;
 	public double[] getNewWeight() {
@@ -44,20 +44,9 @@ public class StochasticGD {
 		return sum;
 	}
 
-	private boolean isConverge(double theta1, double theta2) {
-		System.out.println(Math.abs(theta1 - theta2));
-		return Math.abs(theta1 - theta2) < 0.002;
-	}
-
-	private boolean isConvergeForAll() {
-		boolean result = true;
-		for (int i = 0; i < 57; i++) {
-			if (!isConverge(weight[i], newWeight[i])) {
-				result = false;
-				break;
-			}
-		}
-		return result;
+	private boolean isConverge(double oldJw, double newJw, double tolerance) {
+		double absDiff = Math.abs(oldJw-newJw);
+		return absDiff/oldJw<tolerance;
 	}
 
 	private void initWeight() {
@@ -68,10 +57,9 @@ public class StochasticGD {
 	public void trainData(double alpha) {
 		initWeight();
 		boolean isConverge = false;
-		int k = 500;
-		double rmse = jw();
-		System.out.println(rmse);
-		while (k-- > 0) {
+		double oldRMSE = jw();
+		double newRMSE = 0;
+		while (!isConverge) {
 			for (Vector<Double> mail : normalizedSet) {
 				weight = Arrays.copyOf(newWeight, 57);
 				for (int j = 0; j < 57; j++) {
@@ -79,23 +67,24 @@ public class StochasticGD {
 					newWeight[j] = weight[j] + alpha * diff * mail.get(j);
 				}
 			}
-			// isConverge= isConvergeForAll();
+			newRMSE = jw();
+			isConverge= isConverge(oldRMSE,newRMSE,0.00001);
+			oldRMSE=newRMSE;
 		}
-	    rmse = jw();
-		System.out.println(rmse);
+	    
 	}
 
 	public void prepareTrainingDataSet() {
 		KCrossValidation kcross = new KCrossValidation(1);
 		kcross.extractTestingSetByIndex(-1);
-		ArrayList<Vector<Double>> overallDataSet = kcross.getTrainingData();
+		ArrayList<Email> overallDataSet = kcross.getTrainingData();
 
 		zscore = new Zscore();
 		zscore.calculateSD(overallDataSet);
 
 		KCrossValidation kcross2 = new KCrossValidation(10);
 		kcross2.extractTestingSetByIndex(0);
-		ArrayList<Vector<Double>> partionedSet = kcross2
+		ArrayList<Email> partionedSet = kcross2
 				.getRandomTrainingData();
 		normalizedSet = zscore.getNormalizedData(partionedSet);
 		testDataSet = kcross2.getTestingData();
@@ -111,12 +100,12 @@ public class StochasticGD {
 
 	public void predict() {
 
-		ArrayList<Vector<Double>> normalizedTestData = zscore
+		ArrayList<Email> normalizedTestData = zscore
 				.getNormalizedData(testDataSet);
 		List<Double> taus = new ArrayList<Double>();
 
 		for (int i = 0; i < normalizedTestData.size(); i++) {
-			Vector<Double> oneMail = normalizedTestData.get(i);
+			Email oneMail = normalizedTestData.get(i);
 			double tau = h(newWeight, oneMail);
 			oneMail.add(tau);
 			oneMail.add(testDataSet.get(i).get(57));
@@ -134,7 +123,7 @@ public class StochasticGD {
 			}
 		});
 		
-		for (Vector<Double> mail : normalizedTestData) {
+		for (Email mail : normalizedTestData) {
 			System.out.println(mail.get(58) + "->" + mail.get(59));
 		}
 		plotPoints =new ArrayList<Point>();
