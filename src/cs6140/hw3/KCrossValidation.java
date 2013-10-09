@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.Vector;
 
 public class KCrossValidation {
 
-	public ArrayList<Vector<Double>> getRandomTrainingData(){
-	      ArrayList<Vector<Double>> result=new ArrayList<Vector<Double>>();
+	public ArrayList<Email> getRandomTrainingData(){
+	      ArrayList<Email> result=new ArrayList<Email>();
 	      Random r=new Random();
 	      int initSize = trainingData.size();
 	      System.out.println(initSize);
@@ -29,19 +28,19 @@ public class KCrossValidation {
 	      
 	}
 	
-	public ArrayList<Vector<Double>> getTrainingData() {
+	public ArrayList<Email> getTrainingData() {
 		return trainingData;
 	}
 
-	public void setTrainingData(ArrayList<Vector<Double>> trainingData) {
+	public void setTrainingData(ArrayList<Email> trainingData) {
 		this.trainingData = trainingData;
 	}
 
-	public ArrayList<Vector<Double>> getTestingData() {
+	public ArrayList<Email> getTestingData() {
 		return testingData;
 	}
 
-	public void setTestingData(ArrayList<Vector<Double>> testingData) {
+	public void setTestingData(ArrayList<Email> testingData) {
 		this.testingData = testingData;
 	}
 
@@ -50,9 +49,9 @@ public class KCrossValidation {
 	 */
 	private int k;
 	private ArrayList<ArrayList<String>> partitionedFolds = new ArrayList<ArrayList<String>>();
-	private HashMap<Integer, ArrayList<Vector<Double>>> vectorFoldsMap = new HashMap<Integer, ArrayList<Vector<Double>>>();
-	private ArrayList<Vector<Double>> trainingData = new ArrayList<Vector<Double>>();
-	private ArrayList<Vector<Double>> testingData = new ArrayList<Vector<Double>>();
+	private HashMap<Integer, ArrayList<Email>> vectorFoldsMap = new HashMap<Integer, ArrayList<Email>>();
+	private ArrayList<Email> trainingData = new ArrayList<Email>();
+	private ArrayList<Email> testingData = new ArrayList<Email>();
 
 	public KCrossValidation(int k) {
 		this.k = k;
@@ -78,12 +77,12 @@ public class KCrossValidation {
 		}
 	}
 
-	private ArrayList<Vector<Double>> transformToFeatureVec(
+	private ArrayList<Email> transformToFeatureVec(
 			ArrayList<String> fold) {
-		ArrayList<Vector<Double>> foldWithVectorFeature = new ArrayList<Vector<Double>>();
+		ArrayList<Email> foldWithVectorFeature = new ArrayList<Email>();
 		for (String str : fold) {
 			String[] features = str.split(",");
-			Vector<Double> vec_features = new Vector<Double>();
+			Email vec_features = new Email();
 			for (String strFrequency : features) {
 				vec_features.add(Double.parseDouble(strFrequency));
 			}
@@ -117,7 +116,7 @@ public class KCrossValidation {
 		Iterator<Integer> it = vectorFoldsMap.keySet().iterator();
 		while (it.hasNext()) {
 			Integer key = it.next();
-			ArrayList<Vector<Double>> emailsInOneFold = vectorFoldsMap.get(key);
+			ArrayList<Email> emailsInOneFold = vectorFoldsMap.get(key);
             if(key == indexOfTestingData)
             	testingData.addAll(emailsInOneFold);
             else

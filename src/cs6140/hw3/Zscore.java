@@ -52,7 +52,7 @@ public class Zscore {
 	public void setSd(double[] sd) {
 		this.sd = sd;
 	}
-	public void calculateMean(ArrayList<Vector<Double>> trainingSet){
+	public void calculateMean(ArrayList<Email> trainingSet){
 		//reset means
 		means=new double[MyConstant.SIZE_OF_NORMALIZED_FEATURE];
 		double totalNum= trainingSet.size();
@@ -65,13 +65,13 @@ public class Zscore {
 		
 	}
 	
-	public void calculateSD(ArrayList<Vector<Double>> trainingSet){
+	public void calculateSD(ArrayList<Email> trainingSet){
 		sd = new double[MyConstant.SIZE_OF_NORMALIZED_FEATURE];
 		calculateMean(trainingSet);
 		double[] sum=new double[MyConstant.SIZE_OF_NORMALIZED_FEATURE];
 		double totalNum= trainingSet.size();
 		
-		for(Vector<Double> mail:trainingSet){
+		for(Email mail:trainingSet){
 			for(int fIndex=0;fIndex<MyConstant.SIZE_OF_NORMALIZED_FEATURE;fIndex++){
 				double mui=means[fIndex];
 				double x=mail.get(fIndex);
@@ -84,10 +84,10 @@ public class Zscore {
 		}
 		
 	}
-	public ArrayList<Vector<Double>> getNormalizedData(ArrayList<Vector<Double>> unnormalized){
-		ArrayList<Vector<Double>> normalizedSet= new ArrayList<Vector<Double>>();
-		for(Vector<Double> mail:unnormalized){
-		    Vector<Double> normalizedMail= new Vector<Double>();
+	public ArrayList<Email> getNormalizedData(ArrayList<Email> unnormalized){
+		ArrayList<Email> normalizedSet= new ArrayList<Email>();
+		for(Email mail:unnormalized){
+			Email normalizedMail= new Email();
 			for(int i=0;i<MyConstant.SIZE_OF_NORMALIZED_FEATURE;i++){
 		         normalizedMail.add(getZscoreForX(mail.get(i), means[i], sd[i]));
 		    }
