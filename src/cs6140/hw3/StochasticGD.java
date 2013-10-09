@@ -19,7 +19,7 @@ public class StochasticGD {
 	private ArrayList<Vector<Double>> normalizedSet;
 	private ArrayList<Vector<Double>> testDataSet;
 	private Zscore zscore;
-
+	List<Point> plotPoints;
 	public double[] getNewWeight() {
 		return newWeight;
 	}
@@ -69,6 +69,8 @@ public class StochasticGD {
 		initWeight();
 		boolean isConverge = false;
 		int k = 500;
+		double rmse = jw();
+		System.out.println(rmse);
 		while (k-- > 0) {
 			for (Vector<Double> mail : normalizedSet) {
 				weight = Arrays.copyOf(newWeight, 57);
@@ -79,7 +81,7 @@ public class StochasticGD {
 			}
 			// isConverge= isConvergeForAll();
 		}
-		double rmse = jw();
+	    rmse = jw();
 		System.out.println(rmse);
 	}
 
@@ -135,8 +137,8 @@ public class StochasticGD {
 		for (Vector<Double> mail : normalizedTestData) {
 			System.out.println(mail.get(58) + "->" + mail.get(59));
 		}
-		List<Point> plotPoints =new ArrayList<Point>();
-		for(int i=0;i<normalizedTestData.size();i++){
+		plotPoints =new ArrayList<Point>();
+		for(int i=-1;i<normalizedTestData.size();i++){
 			
 			int fnNum = 0;
 			int fpNum = 0;
@@ -164,10 +166,11 @@ public class StochasticGD {
 			plotPoints.add(point);
 			System.out.println("error rate"+(double)(fpNum + fnNum) / normalizedTestData.size());
 		}
+		
 	}
 	
-	public void printPoint(List<Point> points){
-		for (Point p : points) {
+	public void plotROC(){
+		for (Point p : plotPoints) {
 			System.out.println(p.getX() + "," + p.getY());
 		}
 	}
@@ -176,11 +179,13 @@ public class StochasticGD {
 
 	}
 
-	// TODO plotROC
-	public void plotROC() {
-
+	protected double AUC(){
+		double sum=0;
+		for(int i=1;i<plotPoints.size();i++){
+			sum+=(plotPoints.get(i).getX()-plotPoints.get(i-1).getX())*(plotPoints.get(i).getY()+plotPoints.get(i-1).getY());
+		}
+		return sum*0.5;
 	}
-	
 	/**
 	 * 
 	 * @param fnNum
@@ -216,6 +221,8 @@ public class StochasticGD {
 		}
 		System.out.println(sgd.jw());
 		sgd.predict();
+		sgd.plotROC();
+		System.out.println(sgd.AUC());
 	}
 
 }
