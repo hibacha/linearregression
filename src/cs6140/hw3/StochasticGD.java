@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
+
+
 public class StochasticGD {
 
 	/**
@@ -133,9 +135,7 @@ public class StochasticGD {
 		for (Vector<Double> mail : normalizedTestData) {
 			System.out.println(mail.get(58) + "->" + mail.get(59));
 		}
-        
-		
-		
+		List<Point> plotPoints =new ArrayList<Point>();
 		for(int i=0;i<normalizedTestData.size();i++){
 			
 			int fnNum = 0;
@@ -158,14 +158,19 @@ public class StochasticGD {
 				   tnNum++;
 				}
 			}
+			double tpr = tpr(fnNum, fpNum, tnNum, tpNum);
+			double fpr = fpr(fnNum, fpNum, tnNum, tpNum);
+			Point point = new Point(fpr, tpr);
+			plotPoints.add(point);
 			System.out.println("error rate"+(double)(fpNum + fnNum) / normalizedTestData.size());
 		}
-		
-		
-		
 	}
 	
-	
+	public void printPoint(List<Point> points){
+		for (Point p : points) {
+			System.out.println(p.getX() + "," + p.getY());
+		}
+	}
 	// TODO errorRate
 	public void errorRate() {
 
@@ -175,7 +180,30 @@ public class StochasticGD {
 	public void plotROC() {
 
 	}
-
+	
+	/**
+	 * 
+	 * @param fnNum
+	 * @param fpNum
+	 * @param tnNum
+	 * @param tpNum
+	 * @return true positive rate value
+	 */
+	public double tpr(int fnNum, int fpNum, int tnNum, int tpNum){
+		return (double)(tpNum)/(double)(tpNum+fnNum);
+	}
+	/**
+	 * 
+	 * @param fnNum
+	 * @param fpNum
+	 * @param tnNum
+	 * @param tpNum
+	 * @return false positive value
+	 */
+	public double fpr(int fnNum, int fpNum, int tnNum, int tpNum){
+		return (double)(fpNum)/(double)(fpNum+tnNum);
+	}
+	
 	public static void main(String[] args) {
 
 		StochasticGD sgd = new StochasticGD();
