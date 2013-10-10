@@ -2,11 +2,12 @@ package cs6140.hw3;
 
 import java.util.Arrays;
 
-public class LogisticRegressionStochastic extends GradientDescent{
-	private double gz(double x){
-		return 1/(1+Math.exp(-1*x));
-	}
+public class LogisticRegressionStochastic extends BaseGradientDescent{
 	
+	@Override
+	/**
+	 * Logistic regression formulation 
+	 */
 	protected double rmse(){
 		double sum = 0;
 		for (Email mail : normalizedSet) {
@@ -15,13 +16,14 @@ public class LogisticRegressionStochastic extends GradientDescent{
 		return Math.sqrt(sum / normalizedSet.size());
 	}
 	
-	public void trainData(double alpha) {
+	public void trainData(double alpha, double convergeTolerance) {
 		boolean isConverge = false;
 		double oldRMSE = rmse();
 		System.out.println("rmse:"+oldRMSE);
 		double newRMSE = 0;
 		while (!isConverge) {
 			for (Email mail : normalizedSet) {
+				//update weight with newly calculated weight
 				weight = Arrays.copyOf(newWeight, 57);
 				for (int j = 0; j < 57; j++) {
 					double h=h(weight, mail);
@@ -30,31 +32,17 @@ public class LogisticRegressionStochastic extends GradientDescent{
 				}
 			}
 			newRMSE = rmse();
-			isConverge= isConverge(oldRMSE,newRMSE,0.00001);
+			isConverge= isConverge(oldRMSE,newRMSE,convergeTolerance);
 			oldRMSE=newRMSE;
-			//System.out.println("rmse"+oldRMSE);
 		}
 		System.out.println("rmse"+oldRMSE);
 	}
 	
 	public static void main(String[] args) {
-		long startTime = System.currentTimeMillis();
-		
-		LogisticRegressionStochastic sgd = new LogisticRegressionStochastic();
-		sgd.prepareTrainingDataSet();
-		sgd.trainData(0.001);
-
-		System.out.print("@@@@@@@@@");
-		for (double a : sgd.getNewWeight()) {
-			System.out.println("weight:" + a);
-		}
-		System.out.println(sgd.rmse());
-		sgd.predict();
-		sgd.plotROC();
-		System.out.println(sgd.AUC());
-		
-		long endTime   = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		System.out.println(totalTime);
+		double lambda =0.001;
+		double convergeTolerance=0.00001;
+		boolean isPrintRMSE = true;
+		boolean isPrintWeight = true;
+		runner(new LogisticRegressionStochastic(), lambda, convergeTolerance, isPrintWeight, isPrintRMSE);
 	}
 }

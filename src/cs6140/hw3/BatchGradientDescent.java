@@ -1,49 +1,40 @@
 package cs6140.hw3;
 
-public class BatchGradientDescent extends GradientDescent{
+import java.util.Arrays;
+
+public class BatchGradientDescent extends BaseGradientDescent{
 
 	@Override
-	public void trainData(double alpha) {
+	public void trainData(double alpha, double convergeTolerance) {
 		// TODO Auto-generated method stub
 		boolean isConverge = false;
 		double oldRMSE= rmse();
-		System.out.println("rmse:"+oldRMSE);
+		System.out.println("Initial RMSE:"+oldRMSE);
 		double newRMSE= 0;
 		while(!isConverge){
 			for(int j=0;j<57;j++){
 				double sum=0;
+				//update weight with newly calculated weight
+				weight = Arrays.copyOf(newWeight, 57);
 				for(Email mail: normalizedSet){
-					
 					double diff = mail.get(57) - h(weight, mail);
 					sum+= diff * mail.get(j);
 				}
 				newWeight[j] =  weight[j]+ alpha*sum;
 			}
 			newRMSE = rmse();
-			isConverge= isConverge(oldRMSE,newRMSE,0.00001);
+			isConverge= isConverge(oldRMSE,newRMSE,convergeTolerance);
 			oldRMSE=newRMSE;
 		}
-		System.out.println("rmse"+oldRMSE);
 	}
+	
+	
 	public static void main(String[] args) {
-		long startTime = System.currentTimeMillis();
-		
-		BatchGradientDescent bgd = new BatchGradientDescent();
-		bgd.prepareTrainingDataSet();
-		bgd.trainData(0.001);
-
-		System.out.print("@@@@@@@@@");
-		for (double a : bgd.getNewWeight()) {
-			System.out.println("weight:" + a);
-		}
-		System.out.println(bgd.rmse());
-		bgd.predict();
-		bgd.plotROC();
-		System.out.println(bgd.AUC());
-		
-		long endTime   = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		System.out.println(totalTime);
+		double lambda = 0.00001;
+		double convergeTolerance=0.00001;
+		boolean isPrintRMSE = true;
+		boolean isPrintWeight = true;
+		runner(new BatchGradientDescent(), lambda, convergeTolerance, isPrintWeight, isPrintRMSE);
 	}
 
 }
