@@ -92,7 +92,7 @@ public class Zscore {
 		         normalizedMail.add(getZscoreForX(mail.get(i), means[i], sd[i]));
 		    }
 			//add spam label
-			//normalizedMail.add(mail.get(57));
+			normalizedMail.add(mail.get(57));
 			normalizedSet.add(normalizedMail);
 		}
 		return normalizedSet;
