@@ -15,7 +15,6 @@ public class KCrossValidation {
 	      ArrayList<Email> result=new ArrayList<Email>();
 	      Random r=new Random();
 	      int initSize = trainingData.size();
-	      System.out.println(initSize);
 	      for(int i=0;i<initSize;i++){
 	    	  int size=trainingData.size();
 	    	  int randomIndex=r.nextInt(size);
@@ -23,7 +22,6 @@ public class KCrossValidation {
 	      }
 	      
 	      trainingData=result;
-	      System.out.println("Kcross"+trainingData.size());
 	      return trainingData;
 	      
 	}
@@ -125,8 +123,4 @@ public class KCrossValidation {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		KCrossValidation kv = new KCrossValidation(10);
-		kv.readFromGivenURL(MyConstant.DATA_PATH);
-	}
 }
