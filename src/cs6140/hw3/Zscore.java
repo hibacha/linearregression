@@ -23,28 +23,6 @@ public class Zscore {
 		this.means = means;
 	}
 	
-//	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//		KCrossValidation kcross= new KCrossValidation(1);
-//		kcross.extractTestingSetByIndex(-1);
-//		
-//		Zscore zscore = new Zscore();
-//		ArrayList<Vector<Double>> trainingSet = kcross.getRandomTrainingData();
-//		zscore.calculateMean(trainingSet);
-//		zscore.calculateSD(trainingSet);
-//		
-//		zscore.printArray(zscore.getMeans());
-//		zscore.printArray(zscore.getSd());
-//		System.out.println(zscore.getZscoreForX(0.5,0.10455,0.30536));
-//		
-//	}
-	public void printArray(double[] t){
-		int i=0;
-		for(double a:t){
-			 System.out.println(++i+":"+a);
-		}
-	}
-	
 	
 	public double[] getSd() {
 		return sd;
