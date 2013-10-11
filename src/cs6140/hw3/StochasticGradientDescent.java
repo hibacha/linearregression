@@ -11,7 +11,7 @@ public class StochasticGradientDescent extends BaseGradientDescent{
 	 */
 
 	
-
+    @Override
 	public void trainData(double alpha, double convergeTolerance) {
 		boolean isConverge = false;
 		double oldRMSE = rmse();

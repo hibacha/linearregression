@@ -11,6 +11,13 @@ import java.util.Random;
 
 public class KCrossValidation {
 
+	public ArrayList<Email> getRandomTrainingData(String filePath){
+		PersistRandomizedHelper helper = new PersistRandomizedHelper();
+		ArrayList<Email> randomSet=helper.deserialize(filePath);
+		trainingData=randomSet;
+		return trainingData;
+		
+	}
 	public ArrayList<Email> getRandomTrainingData(){
 	      ArrayList<Email> result=new ArrayList<Email>();
 	      Random r=new Random();
@@ -22,10 +29,15 @@ public class KCrossValidation {
 	      }
 	      
 	      trainingData=result;
+	      serilizedRandomSet(trainingData);
 	      return trainingData;
 	      
 	}
 	
+	public void serilizedRandomSet(ArrayList<Email> randomSet){
+		PersistRandomizedHelper helper = new PersistRandomizedHelper();
+		helper.serilize(randomSet);
+	}
 	public ArrayList<Email> getTrainingData() {
 		return trainingData;
 	}

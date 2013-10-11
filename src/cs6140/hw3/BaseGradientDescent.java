@@ -46,8 +46,8 @@ public abstract class BaseGradientDescent {
 
 		KCrossValidation kcross2 = new KCrossValidation(10);
 		kcross2.extractTestingSetByIndex(0);
-		ArrayList<Email> partionedSet = kcross2
-				.getRandomTrainingData();
+		//
+		ArrayList<Email> partionedSet = kcross2.getRandomTrainingData(PersistRandomizedHelper.PATH);
 		normalizedSet = zscore.getNormalizedData(partionedSet);
 		testDataSet = kcross2.getTestingData();
 	}
