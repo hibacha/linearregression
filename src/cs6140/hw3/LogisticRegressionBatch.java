@@ -18,7 +18,9 @@ public class LogisticRegressionBatch extends BaseGradientDescent{
 		double oldRMSE= rmse();
 		System.out.println("Initial RMSE:"+oldRMSE);
 		double newRMSE= 0;
+		int iterationCount=0;
 		while(!isConverge){
+			iterationCount++;
 			for(int j=0;j<57;j++){
 				double sum=0;
 				//update weight with newly calculated weight
@@ -33,13 +35,13 @@ public class LogisticRegressionBatch extends BaseGradientDescent{
 			newRMSE = rmse();
 			isConverge= isConverge(oldRMSE,newRMSE,convergeTolerance);
 			oldRMSE=newRMSE;
-			System.out.println("Final RMSE:"+oldRMSE);
+			System.out.println(iterationCount+","+oldRMSE);
 		}
 	}
 	
 	
 	public static void main(String[] args) {
-		double lambda =0.001;
+		double lambda =0.01;
 		double convergeTolerance=0.00001;
 		boolean isPrintRMSE = true;
 		boolean isPrintWeight = true;

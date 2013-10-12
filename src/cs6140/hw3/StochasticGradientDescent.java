@@ -17,7 +17,9 @@ public class StochasticGradientDescent extends BaseGradientDescent{
 		double oldRMSE = rmse();
 		System.out.println("rmse:"+oldRMSE);
 		double newRMSE = 0;
+		int iterationCount=0;
 		while (!isConverge) {
+			iterationCount++;
 			for (Email mail : normalizedSet) {
 				//update weight with newly calculated weight
 				weight = Arrays.copyOf(newWeight, 57);
@@ -29,8 +31,9 @@ public class StochasticGradientDescent extends BaseGradientDescent{
 			newRMSE = rmse();
 			isConverge= isConverge(oldRMSE,newRMSE,convergeTolerance);
 			oldRMSE=newRMSE;
+			System.out.println(iterationCount+","+oldRMSE);
 		}
-		System.out.println("Final RMSE"+oldRMSE);
+		System.out.println("Final:"+oldRMSE);
 	}
 
 
@@ -38,6 +41,7 @@ public class StochasticGradientDescent extends BaseGradientDescent{
 	
 	public static void main(String[] args) {
 		double lambda =0.001;
+		
 		double convergeTolerance=0.00001;
 		boolean isPrintRMSE = true;
 		boolean isPrintWeight = true;

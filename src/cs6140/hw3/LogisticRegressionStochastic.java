@@ -21,7 +21,9 @@ public class LogisticRegressionStochastic extends BaseGradientDescent{
 		double oldRMSE = rmse();
 		System.out.println("init RMSE:"+oldRMSE);
 		double newRMSE = 0;
+		int iterationCount=0;
 		while (!isConverge) {
+			iterationCount++;
 			for (Email mail : normalizedSet) {
 				//update weight with newly calculated weight
 				weight = Arrays.copyOf(newWeight, 57);
@@ -34,12 +36,13 @@ public class LogisticRegressionStochastic extends BaseGradientDescent{
 			newRMSE = rmse();
 			isConverge= isConverge(oldRMSE,newRMSE,convergeTolerance);
 			oldRMSE=newRMSE;
+			System.out.println(iterationCount+","+oldRMSE);
 		}
-		System.out.println("Final RMSE:"+oldRMSE);
+		
 	}
 	
 	public static void main(String[] args) {
-		double lambda =0.001;
+		double lambda =0.1;
 		double convergeTolerance=0.0001;
 		boolean isPrintRMSE = true;
 		boolean isPrintWeight = true;
