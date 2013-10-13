@@ -40,7 +40,7 @@ public class StochasticGradientDescent extends BaseGradientDescent{
 	
 	
 	public static void main(String[] args) {
-		double lambda =0.001;
+		double lambda =0.00001;
 		
 		double convergeTolerance=0.00001;
 		boolean isPrintRMSE = true;
