@@ -7,7 +7,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
-
+/**
+ * 
+ * @author zhouyf
+ * Gradient Descent base class including some helper function
+ */
 public abstract class BaseGradientDescent {
 	protected double[] weight = new double[EMAIL_FEATURE_NUM];
 	protected double[] newWeight = new double[EMAIL_FEATURE_NUM];
@@ -17,17 +21,31 @@ public abstract class BaseGradientDescent {
 	protected List<Point> plotPoints;
 	public abstract void trainData(double alpha, double convergeTolerance);
 	
-	
+	/**
+	 * logistic function
+	 * @param x
+	 * @return
+	 */
 	protected double gz(double x){
 		return 1/(1+Math.exp(-1*x));
 	}
 	
+	/**
+	 * 
+	 * @param oldRMSE
+	 * @param newRMSE
+	 * @param tolerance
+	 * @return if converge
+	 */
 	protected boolean isConverge(double oldRMSE, double newRMSE, double tolerance) {
 		double absDiff = Math.abs(oldRMSE-newRMSE);
 		return (absDiff/oldRMSE)<tolerance;
 	}
 	
-	
+	/**
+	 * calculate rmse value
+	 * @return
+	 */
 	protected double rmse(){
 		double sum = 0;
 		for (Email mail : normalizedSet) {
@@ -36,6 +54,9 @@ public abstract class BaseGradientDescent {
 		return Math.sqrt(0.5*sum / normalizedSet.size());
 	}
 	
+	/**
+	 * prepare training data set
+	 */
 	public void prepareTrainingDataSet() {
 		KCrossValidation kcross = new KCrossValidation(1);
 		kcross.extractTestingSetByIndex(-1);
@@ -47,12 +68,18 @@ public abstract class BaseGradientDescent {
 		KCrossValidation kcross2 = new KCrossValidation(10);
 		kcross2.extractTestingSetByIndex(0);
 		
-		//ArrayList<Email> partionedSet = kcross2.getRandomTrainingData();
-		ArrayList<Email> partionedSet = kcross2.getRandomTrainingData(PersistRandomizedHelper.PATH);
+		ArrayList<Email> partionedSet = kcross2.getRandomTrainingData();
+		//ArrayList<Email> partionedSet = kcross2.getRandomTrainingData(PersistRandomizedHelper.PATH);
 		normalizedSet = zscore.getNormalizedData(partionedSet);
 		testDataSet = kcross2.getTestingData();
 	}
 	
+	/**
+	 * hypothesis function
+	 * @param weight
+	 * @param x
+	 * @return
+	 */
 	protected double h(double[] weight, Email x) {
 		double sum = 0;
 		for (int i = 0; i < weight.length; i++) {
@@ -61,6 +88,9 @@ public abstract class BaseGradientDescent {
 		return sum;
 	}
 	
+	/**
+	 * predict using test data set
+	 */
 	public void predict() {
 
 		ArrayList<Email> normalizedTestData = zscore
@@ -71,7 +101,7 @@ public abstract class BaseGradientDescent {
 			oneMail.add(tau);
 			oneMail.add(testDataSet.get(i).get(57));
 		}
-
+		//sort by threshold value
 		Collections.sort(normalizedTestData, new Comparator<Vector<Double>>() {
 			@Override
 			public int compare(Vector<Double> o1, Vector<Double> o2) {
@@ -118,12 +148,20 @@ public abstract class BaseGradientDescent {
 		}
 		
 	}
+	
+	/**
+	 * plot ROC curve
+	 */
 	public void plotROC(){
 		for (Point p : plotPoints) {
 			System.out.println(p.getX() + "," + p.getY());
 		}
 	}
 
+	/**
+	 * calcualte AUC value
+	 * @return
+	 */
 	protected double AUC(){
 		double sum=0;
 		for(int i=1;i<plotPoints.size();i++){
@@ -176,6 +214,14 @@ public abstract class BaseGradientDescent {
 		this.weight = weight;
 	}
 	
+	/**
+	 * runner function
+	 * @param gradientDescent
+	 * @param lambda
+	 * @param convergeTolerance
+	 * @param isPrintWeight
+	 * @param isPrintRMSE
+	 */
 	public static void runner(BaseGradientDescent gradientDescent, double lambda, double convergeTolerance, boolean isPrintWeight, boolean isPrintRMSE){
 		long startTime = System.currentTimeMillis();
 		

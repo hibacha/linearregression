@@ -7,7 +7,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author zhouyf
+ *
+ */
 public class PersistRandomizedHelper implements Serializable {
 
 	/**
@@ -16,7 +20,11 @@ public class PersistRandomizedHelper implements Serializable {
 	private static final long serialVersionUID = -6867380222361956389L;
 	
 	public static final String PATH ="/Users/zhouyf/address.ser";
-
+	
+	/**
+	 * 
+	 * @param randomizedListOfEmails
+	 */
 	public  void serilize(ArrayList<Email> randomizedListOfEmails) {
 		
 		try {
@@ -30,7 +38,11 @@ public class PersistRandomizedHelper implements Serializable {
 			ex.printStackTrace();
 		}
 	}
-	
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public  ArrayList<Email> deserialize(String path)
     {
 
