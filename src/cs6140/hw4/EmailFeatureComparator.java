@@ -4,10 +4,10 @@ import java.util.Comparator;
 
 import cs6140.hw3.Email;
 
-public class AdaComparator implements Comparator<Email>{
+public class EmailFeatureComparator implements Comparator<Email>{
     
 	private int featureIndex;
-	public AdaComparator(int featureIndex){
+	public EmailFeatureComparator(int featureIndex){
 		this.featureIndex=featureIndex;
 	}
 	
