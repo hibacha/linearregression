@@ -2,6 +2,7 @@ package cs6140.hw4;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -13,8 +14,16 @@ public class DecisionStumps {
 	public int optimumFeature;
 	
 	//distribution
-	public Vector<Double> d= new Vector<Double>();
+	private Vector<Double> d= new Vector<Double>();
 	
+	public Vector<Double> getD() {
+		return d;
+	}
+
+	public void setD(Vector<Double> d) {
+		this.d = d;
+	}
+
 	//this array store the sorted data by each feature value
 	public ArrayList<Vector<Integer>> sortedByFeatureData = new ArrayList<Vector<Integer>>();
 	
@@ -34,10 +43,6 @@ public class DecisionStumps {
 		return 0;
 	}
 	
-	public void calculateNewErrorRate(){
-		
-	}
-	
 	public void initSortedFeatureArray(){
 		for (int i = 0; i < 57; i++) {
 			sortByFeature(i);
@@ -51,33 +56,57 @@ public class DecisionStumps {
 		}
 	}
 	
-	
-	public void buildErrorMatrixForOneFeature(int featureIndex, Vector<Double> threshold, Vector<Integer> sortedDataPoint){
-		backToOriginalTrainingSet();
+	public Solution getWeightedOptimalSolution(){
+		List<Solution> container = new ArrayList<Solution>();
+		for(int i=0;i<57;i++){
+			Solution os = buildErrorMatrixForOneFeature(i,thresholdForFeature.get(i),sortedByFeatureData.get(i));
+		    container.add(os);
+		}
+	   	return extractOptimalSolution(container);
+	}
+	public Solution buildErrorMatrixForOneFeature(int featureIndex, Vector<Double> threshold, Vector<Integer> sortedDataPoint){
+		//backToOriginalTrainingSet();
 		Iterator<Double> it = threshold.iterator();
-	   	List<Double> container = new ArrayList<Double>();
+	   	List<Solution> container = new ArrayList<Solution>();
 	   	while(it.hasNext()){
 	   		Double athreshold = it.next();
-	   		
-	   		container.add(calculateErrorRateByWeight(featureIndex,
-					athreshold, sortedDataPoint));		
+	   		Solution os = calculateErrorRateByWeight(featureIndex,
+					athreshold, sortedDataPoint);
+	   		container.add(os);
 	   		
 	   	}
-	   	System.out.println(Collections.min(container));
+	   	return extractOptimalSolution(container);
+	}
+
+	private Solution extractOptimalSolution(List<Solution> container) {
+		Solution min= Collections.min(container, new SolutionComparator());
+	   	Solution max= Collections.max(container, new SolutionComparator());
+	   	if(Math.abs(0.5-min.getErrorRateWeighted())>Math.abs(0.5- max.getErrorRateWeighted()))
+	   	  return  min;
+	   	else
+	   	  return max;
 	}
 	
-	private double calculateErrorRateByWeight(int featureIndex, double threshold, Vector<Integer> sortedDataPoint){
+	private Solution calculateErrorRateByWeight(int featureIndex, double threshold, Vector<Integer> sortedDataPoint){
 	    Iterator<Integer> it = sortedDataPoint.iterator();
 	   	double errorRateWeight=0;
+	   	double errorNum=0;
 	   	while(it.hasNext()){
 	   		Integer dataSeqId = it.next();
+	   		//TODO improvement
 	   		if(trainingSet.get(dataSeqId).get(featureIndex)<threshold){
-	   			errorRateWeight+=checkError(dataSeqId,-1.0);
+				if (checkError(dataSeqId, -1.0) > 0) {
+					errorRateWeight += checkError(dataSeqId, -1.0);
+					errorNum++;
+				}
 	   		} else{
-	   			errorRateWeight+=checkError(dataSeqId, 1.0);
+				if (checkError(dataSeqId, 1.0) > 0) {
+					errorRateWeight += checkError(dataSeqId, 1.0);
+					errorNum++;
+				}
 	   		}
 	   	}
-	   	return errorRateWeight;
+	   	return new Solution(featureIndex,errorRateWeight,threshold,errorNum/sortedDataPoint.size());
 	}
 	
 	private double checkError(Integer dataSeqId, double predict) {
@@ -86,16 +115,15 @@ public class DecisionStumps {
 		}else{
 			return 0;
 		}
-		
 	}
 
 	public void backToOriginalTrainingSet(){
-		sortByFeature(MyConstant.INDEX_FOR_DATA_ID);
+		Collections.sort(trainingSet,new EmailFeatureComparator(MyConstant.INDEX_FOR_DATA_ID));
 	}
 	
 	private  void sortByFeature(int fIndex){
 		
-	    Collections.sort(trainingSet,new AdaComparator(fIndex));
+	    Collections.sort(trainingSet,new EmailFeatureComparator(fIndex));
 	    
 	    Vector<Integer> sortedDataPointSeq = new Vector<Integer>();
 	    Vector<Double> threshold = new Vector<Double>();
