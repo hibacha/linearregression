@@ -5,6 +5,9 @@ import java.util.Vector;
 public class ThresholdToErrorItems {
 	
 	private  int featureIndex;
+	private double threshold;
+	private Vector<Integer> errorIds=new Vector<Integer>();
+	
 	public int getFeatureIndex() {
 		return featureIndex;
 	}
@@ -13,10 +16,6 @@ public class ThresholdToErrorItems {
 		this.featureIndex = featureIndex;
 	}
 
-	private double threshold;
-	
-	private Vector<Integer> errorIds=new Vector<Integer>();
-	
 	public ThresholdToErrorItems(double threshold, int featureIndex) {
 		this.threshold=threshold;
 		this.featureIndex = featureIndex;

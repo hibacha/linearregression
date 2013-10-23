@@ -8,17 +8,12 @@ import cs6140.hw3.Email;
 public class AdaBoosting {
 	
 	
-	public Vector<Double> updateD(Solution os, Vector<Double> oldD, ArrayList<Email> trainingSet){
+	public static Vector<Double> updateD(Solution os, Vector<Double> oldD, ArrayList<Email> trainingSet){
 		double sum =0;
 		Vector<Double> newD=new Vector<Double>();
 		for(Email e: trainingSet){
 			double realClass= e.get(MyConstant.INDEX_EMAIL_SPAM_LABEL);
-			double predict = 0;
-			if(e.get(os.getFeatureIndex())<os.getThreshold()){
-				predict=-1;
-			}else{
-				predict=1;
-			}
+			double predict= e.get(os.getFeatureIndex()) < os.getThreshold()?-1:1;
 			double factor=1;
 			if(predict==realClass){
 				factor=Math.sqrt(os.getErrorRateWeighted()/(1-os.getErrorRateWeighted()));

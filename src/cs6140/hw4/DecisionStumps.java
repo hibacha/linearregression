@@ -24,11 +24,7 @@ public class DecisionStumps {
 		this.d = d;
 	}
 
-	//this array store the sorted data by each feature value
-	public ArrayList<Vector<Integer>> sortedByFeatureData = new ArrayList<Vector<Integer>>();
-	
-	//this array store the threshold value for each feature value
-	public ArrayList<Vector<Double>> thresholdForFeature = new ArrayList<Vector<Double>>();
+	public ArrayList<Vector<ThresholdToErrorItems>> thresholdForFeature = new ArrayList<Vector<ThresholdToErrorItems>>();
 	
 	public ArrayList<Email> getTrainingSet() {
 		return trainingSet;
@@ -43,12 +39,6 @@ public class DecisionStumps {
 		return 0;
 	}
 	
-	public void initSortedFeatureArray(){
-		for (int i = 0; i < 57; i++) {
-			sortByFeature(i);
-		}
-	}
-	
 	public void initD(){
 		int m=trainingSet.size();
 		for (int i = 0; i < m; i++) {
@@ -56,28 +46,30 @@ public class DecisionStumps {
 		}
 	}
 	
-	public Solution getWeightedOptimalSolution(){
-		List<Solution> container = new ArrayList<Solution>();
+	public void backToOriginalTrainingSet(){
+		Collections.sort(trainingSet,new EmailFeatureComparator(MyConstant.INDEX_FOR_DATA_ID));
+	}
+	
+	public Solution getGlobalOptimalSolution(){
+        ArrayList<Solution> container = new ArrayList<Solution>();
 		for(int i=0;i<57;i++){
-			Solution os = buildErrorMatrixForOneFeature(i,thresholdForFeature.get(i),sortedByFeatureData.get(i));
-		    container.add(os);
+			container.add(getOptimalSolutionOfOneFeature(i));
 		}
-	   	return extractOptimalSolution(container);
+		return extractOptimalSolution(container);
 	}
-	public Solution buildErrorMatrixForOneFeature(int featureIndex, Vector<Double> threshold, Vector<Integer> sortedDataPoint){
-		//backToOriginalTrainingSet();
-		Iterator<Double> it = threshold.iterator();
-	   	List<Solution> container = new ArrayList<Solution>();
-	   	while(it.hasNext()){
-	   		Double athreshold = it.next();
-	   		Solution os = calculateErrorRateByWeight(featureIndex,
-					athreshold, sortedDataPoint);
-	   		container.add(os);
-	   		
-	   	}
-	   	return extractOptimalSolution(container);
+	
+	public Solution getOptimalSolutionOfOneFeature(int featureIndex){
+		Vector<ThresholdToErrorItems> thresholds = thresholdForFeature.get(featureIndex);
+        ArrayList<Solution> container = new ArrayList<Solution>();
+		for(ThresholdToErrorItems item: thresholds){
+			double errorRateWeighted=item.errorRate(d);
+			double threshold=item.getThreshold();
+			Solution so=new Solution(featureIndex, errorRateWeighted, threshold, (double)item.getErrorIds().size()/trainingSet.size());
+			container.add(so);
+		}
+		return extractOptimalSolution(container);
 	}
-
+	
 	private Solution extractOptimalSolution(List<Solution> container) {
 		Solution min= Collections.min(container, new SolutionComparator());
 	   	Solution max= Collections.max(container, new SolutionComparator());
@@ -87,65 +79,53 @@ public class DecisionStumps {
 	   	  return max;
 	}
 	
-	private Solution calculateErrorRateByWeight(int featureIndex, double threshold, Vector<Integer> sortedDataPoint){
-	    Iterator<Integer> it = sortedDataPoint.iterator();
-	   	double errorRateWeight=0;
-	   	double errorNum=0;
-	   	while(it.hasNext()){
-	   		Integer dataSeqId = it.next();
-	   		//TODO improvement
-	   		if(trainingSet.get(dataSeqId).get(featureIndex)<threshold){
-				if (checkError(dataSeqId, -1.0) > 0) {
-					errorRateWeight += checkError(dataSeqId, -1.0);
-					errorNum++;
-				}
-	   		} else{
-				if (checkError(dataSeqId, 1.0) > 0) {
-					errorRateWeight += checkError(dataSeqId, 1.0);
-					errorNum++;
-				}
-	   		}
-	   	}
-	   	return new Solution(featureIndex,errorRateWeight,threshold,errorNum/sortedDataPoint.size());
-	}
-	
-	private double checkError(Integer dataSeqId, double predict) {
-		if(trainingSet.get(dataSeqId).get(MyConstant.INDEX_EMAIL_SPAM_LABEL)!=predict){
-			return d.get(dataSeqId);
-		}else{
-			return 0;
+	public  void generateEntireDictionary(){
+		backToOriginalTrainingSet();
+		for (int i = 0; i < 57; i++) {
+			Vector<ThresholdToErrorItems> allThresholds  =this.thresholdForFeature.get(i);
+			for (int j = 0; j < allThresholds.size(); j++) {
+				ThresholdToErrorItems thresholdItem = allThresholds.get(j);
+				getWrongList(thresholdItem);
+			}
 		}
 	}
-
-	public void backToOriginalTrainingSet(){
-		Collections.sort(trainingSet,new EmailFeatureComparator(MyConstant.INDEX_FOR_DATA_ID));
+	
+	private void getWrongList(ThresholdToErrorItems thresholdObj){
+		Iterator<Email> it=trainingSet.iterator();
+		int featureIndex = thresholdObj.getFeatureIndex();
+		double threshold = thresholdObj.getThreshold();
+		while(it.hasNext()){
+			Email email = it.next();
+			double predict=0;
+			predict= email.get(featureIndex)< threshold?-1:1;
+			if(email.get(MyConstant.INDEX_EMAIL_SPAM_LABEL)!=predict){
+				thresholdObj.addWrongPredictDataPoint((int)email.get(MyConstant.INDEX_FOR_DATA_ID).doubleValue());
+			}
+		}
+	}
+	
+	public void initSortedFeatureArray(){
+		for (int i = 0; i < 57; i++) {
+			sortByFeature(i);
+		}
 	}
 	
 	private  void sortByFeature(int fIndex){
-		
 	    Collections.sort(trainingSet,new EmailFeatureComparator(fIndex));
-	    
-	    Vector<Integer> sortedDataPointSeq = new Vector<Integer>();
-	    Vector<Double> threshold = new Vector<Double>();
-	    
+	    Vector<ThresholdToErrorItems> oneFeatureThresholdVec = new Vector<ThresholdToErrorItems>();
 	    double previousFeatureValue=trainingSet.get(0).get(fIndex);
-	    threshold.add(Double.NEGATIVE_INFINITY);
+	    oneFeatureThresholdVec.add(new ThresholdToErrorItems(Double.NEGATIVE_INFINITY, fIndex));
 	    for(Email e:trainingSet){
-	    	sortedDataPointSeq.add((int)e.get(MyConstant.INDEX_FOR_DATA_ID).doubleValue());
 	    	double currentFeatureValue=e.get(fIndex);
 	    	
 	    	if(currentFeatureValue>previousFeatureValue){
 	    		double midPoint =(previousFeatureValue+currentFeatureValue)/2;
-	    		threshold.add(midPoint);
+	    		oneFeatureThresholdVec.add(new ThresholdToErrorItems(midPoint, fIndex));
 	    		previousFeatureValue=currentFeatureValue;
-	    		//System.out.println("midPoint"+ midPoint);
 	    	}
-	    	//System.out.println(e.get(MyConstant.INDEX_FOR_DATA_ID) + "->"+e.get(0));
 	    }
-	    threshold.add(Double.POSITIVE_INFINITY);
-	    
-	    sortedByFeatureData.add(sortedDataPointSeq);
-	    thresholdForFeature.add(threshold);
+	    oneFeatureThresholdVec.add(new ThresholdToErrorItems(Double.POSITIVE_INFINITY, fIndex));
+	    thresholdForFeature.add(oneFeatureThresholdVec);
 	}
 	
 }

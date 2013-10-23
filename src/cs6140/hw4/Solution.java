@@ -30,11 +30,11 @@ public class Solution {
 	}
 	
 	public double output(Email email){
-		double output = alphaT();
+		double alpha = alphaT();
 		if(email.get(featureIndex)<threshold){
-			return output*-1;
+			return alpha*-1;
 		}else{
-			return output*1;
+			return alpha*1;
 		}
 	}
 	

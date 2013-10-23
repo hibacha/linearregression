@@ -1,8 +1,6 @@
 package cs6140.hw4;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
 
 import cs6140.hw3.Email;
@@ -10,28 +8,31 @@ import cs6140.hw3.Email;
 public class Runner {
 
 	public static void main(String[] args) {
-		
+		//partition entire dataset into 10 folds
 		KCrossValidation k = new KCrossValidation(10);
+		
+		//set test dataset index
 		k.extractTestingSetByIndex(0);
+		//
 		ArrayList<Email> trainingSet = k.getTrainingData();
 		ArrayList<Email> testingSet = k.getTestingData();
+		
+		//
 		normalize(trainingSet);
+		normalize(testingSet);
+		//normalize testing set
+		Vector<Solution> params=new Vector<Solution>();
 
 		DecisionStumps ds=new DecisionStumps(trainingSet);
 		ds.initSortedFeatureArray();
 		ds.backToOriginalTrainingSet();
-		Vector<Solution> params=new Vector<Solution>();
-		for(int t=0;t<100;t++){
-			Solution globalOptimum = ds.getWeightedOptimalSolution();
-		   	System.out.println(globalOptimum.toString());
+		ds.generateEntireDictionary();
+
+		for(int t=0;t<300;t++){
+			Solution globalOptimum = ds.getGlobalOptimalSolution();
+		   	System.out.println("Round"+t+":"+globalOptimum.toString());
 		   	params.add(globalOptimum);
-		   	AdaBoosting adaBoosting = new AdaBoosting();
-		   	//**
-		   	for(Email e: trainingSet){
-		   		System.out.print(e.get(MyConstant.INDEX_FOR_DATA_ID)+"\t");
-		   	}
-		   	//**
-		   	Vector<Double> newD = adaBoosting.updateD(globalOptimum, ds.getD(), trainingSet);
+		   	Vector<Double> newD = AdaBoosting.updateD(globalOptimum, ds.getD(), trainingSet);
 		   	ds.setD(newD);
 		   	
 		   	double errorNum=0;
@@ -40,7 +41,7 @@ public class Runner {
 		   			errorNum++;
 		   		}
 		   	}
-		   	System.out.println("errorRate:"+errorNum/testingSet.size());
+		   	System.out.println("testErrorRate:"+errorNum/testingSet.size());
 		}
 	}
 	
