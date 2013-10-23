@@ -3,10 +3,23 @@ package cs6140.hw4;
 import java.util.Vector;
 
 public class ThresholdToErrorItem {
-	
+	//feature index
 	private  int featureIndex;
+	
+	//threshold for given feature
 	private double threshold;
+	
+	//a vector of mispredict data id
 	private Vector<Integer> errorIds=new Vector<Integer>();
+	
+	//return weighed error rate according to distribution
+	public double errorRate(Vector<Double> distribution){
+		double sum=0;
+	    for (Integer id : errorIds) {
+			sum+=distribution.get(id);
+		}
+	    return sum;
+	}
 	
 	public int getFeatureIndex() {
 		return featureIndex;
@@ -39,11 +52,5 @@ public class ThresholdToErrorItem {
 		this.errorIds = errorIds;
 	}
 	
-	public double errorRate(Vector<Double> distribution){
-		double sum=0;
-	    for (Integer id : errorIds) {
-			sum+=distribution.get(id);
-		}
-	    return sum;
-	}
+
 }

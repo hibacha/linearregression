@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
-import cs6140.hw3.Email;
+import cs6140.hw4.Email;
 
 public class KCrossValidation {
 

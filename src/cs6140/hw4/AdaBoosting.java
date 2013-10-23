@@ -3,7 +3,7 @@ package cs6140.hw4;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import cs6140.hw3.Email;
+import cs6140.hw4.Email;
 
 public class AdaBoosting {
 	

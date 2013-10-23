@@ -1,6 +1,6 @@
 package cs6140.hw4;
 
-import cs6140.hw3.Email;
+import cs6140.hw4.Email;
 
 public class Solution {
 	private int featureIndex;
