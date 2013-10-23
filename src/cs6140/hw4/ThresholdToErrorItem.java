@@ -2,7 +2,7 @@ package cs6140.hw4;
 
 import java.util.Vector;
 
-public class ThresholdToErrorItems {
+public class ThresholdToErrorItem {
 	
 	private  int featureIndex;
 	private double threshold;
@@ -16,7 +16,7 @@ public class ThresholdToErrorItems {
 		this.featureIndex = featureIndex;
 	}
 
-	public ThresholdToErrorItems(double threshold, int featureIndex) {
+	public ThresholdToErrorItem(double threshold, int featureIndex) {
 		this.threshold=threshold;
 		this.featureIndex = featureIndex;
 	}
