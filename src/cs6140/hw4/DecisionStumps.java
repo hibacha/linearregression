@@ -19,8 +19,17 @@ public class DecisionStumps {
 	//a list indexed feature containing a list of ThresholdToErrorItem Object
 	private ArrayList<Vector<ThresholdToErrorItem>> allFeatureToThresholdsDic = new ArrayList<Vector<ThresholdToErrorItem>>();
 	
+	
+	public DecisionStumps(ArrayList<Email> trainingSet) {
+		this.trainingSet= trainingSet;
+		initDistribution();
+		initSortedFeatureArray();
+		backToOriginalTrainingSet();
+		generateEntireDictionary();
+	}
+	
 	//initialize as uniform distribution
-	public void initDistribution(){
+	private void initDistribution(){
 		int m=trainingSet.size();
 		for (int i = 0; i < m; i++) {
 			distribution.add(1.0/m);
@@ -28,7 +37,7 @@ public class DecisionStumps {
 	}
 	
 	//sort training set using data Id to make it consistent with distribution
-	public void backToOriginalTrainingSet(){
+	private void backToOriginalTrainingSet(){
 		Collections.sort(trainingSet,new EmailFeatureComparator(MyConstant.INDEX_FOR_DATA_ID));
 	}
 	
@@ -62,8 +71,7 @@ public class DecisionStumps {
 	}
 	
 	//generate entire feature -> threshold dictionary
-	public void generateEntireDictionary(){
-		backToOriginalTrainingSet();
+	private void generateEntireDictionary(){
 		for (int i = 0; i < 57; i++) {
 			Vector<ThresholdToErrorItem> allThresholds  =this.allFeatureToThresholdsDic.get(i);
 			for (int j = 0; j < allThresholds.size(); j++) {
@@ -89,7 +97,7 @@ public class DecisionStumps {
 	}
 	
 	//calculate all thresholds
-	public void initSortedFeatureArray(){
+	private void initSortedFeatureArray(){
 		for (int i = 0; i < 57; i++) {
 			sortByFeature(i);
 		}
@@ -127,9 +135,5 @@ public class DecisionStumps {
 		return trainingSet;
 	}
 
-	public DecisionStumps(ArrayList<Email> trainingSet) {
-		this.trainingSet= trainingSet;
-		initDistribution();
-	}
 	
 }

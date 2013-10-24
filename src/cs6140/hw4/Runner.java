@@ -3,10 +3,8 @@ package cs6140.hw4;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import cs6140.hw4.Email;
-
 public class Runner {
-
+    public static final int  ITERATION_ROUND = 15;
 	public static void main(String[] args) {
 		//partition entire dataset into 10 folds
 		KCrossValidation k = new KCrossValidation(10);
@@ -17,45 +15,32 @@ public class Runner {
 		ArrayList<Email> trainingSet = k.getTrainingData();
 		ArrayList<Email> testingSet = k.getTestingData();
 		
-		//
+		//	normalize testing set and training data set
 		normalize(trainingSet);
 		normalize(testingSet);
-		//normalize testing set
+	
+		//store optimal solution returned by each round
 		Vector<Solution> params=new Vector<Solution>();
 
 		DecisionStumps ds=new DecisionStumps(trainingSet);
-		ds.initSortedFeatureArray();
-		ds.backToOriginalTrainingSet();
-		ds.generateEntireDictionary();
-
-		for(int t=0;t<300;t++){
+		
+		ArrayList<Point> plotPoints;
+		for(int t=0;t<ITERATION_ROUND;t++){
 			Solution globalOptimum = ds.getGlobalOptimalSolution();
 		   	System.out.println("Round"+t+":"+globalOptimum.toString());
 		   	params.add(globalOptimum);
 		   	Vector<Double> newD = AdaBoosting.updateD(globalOptimum, ds.getD(), trainingSet);
 		   	ds.setD(newD);
 		   	
-		   	double errorNum=0;
-		   	for(Email e:testingSet){
-		   		if(!isPredictRight(predictAEmail(e, params), e.get(MyConstant.INDEX_EMAIL_SPAM_LABEL))){
-		   			errorNum++;
-		   		}
-		   	}
+		   	double errorNum = AdaBoosting.testDataSet(testingSet, params);
 		   	System.out.println("testErrorRate:"+errorNum/testingSet.size());
+		   	
+		   	plotPoints = ROC.plotROC(testingSet);
+		   	AUC.calAUC(plotPoints);
 		}
+		
 	}
-	
-	
-	public static boolean isPredictRight(double predictValue, double real){
-		return predictValue*real>0;
-	}
-	public static double predictAEmail(Email email, Vector<Solution> params){
-		double sum=0;
-		for(Solution s:params){
-			sum+=s.output(email);
-		}
-		return sum;
-	}
+
     /**
      * add label Seq Id to each data point
      * add transform spam label 0 to -1

@@ -33,4 +33,29 @@ public class AdaBoosting {
 	
 		return newD;
 	}
+	
+	public static double testDataSet(ArrayList<Email> testingSet,
+			Vector<Solution> params) {
+		double errorNum = 0;
+		for (Email e : testingSet) {
+			double tau = predictAEmail(e, params);
+			e.set(e.size() - 1, tau);
+			if (!isPredictRight(tau, e.get(MyConstant.INDEX_EMAIL_SPAM_LABEL))) {
+				errorNum++;
+			}
+		}
+		return errorNum;
+	}
+
+	
+	private static boolean isPredictRight(double predictValue, double real){
+		return predictValue*real>0;
+	}
+	private static double predictAEmail(Email email, Vector<Solution> params){
+		double sum=0;
+		for(Solution s:params){
+			sum+=s.output(email);
+		}
+		return sum;
+	}
 }
