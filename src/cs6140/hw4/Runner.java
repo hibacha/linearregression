@@ -22,7 +22,7 @@ public class Runner {
 		//store optimal solution returned by each round
 		Vector<Solution> params=new Vector<Solution>();
 
-		DecisionStumps ds=new DecisionStumps(trainingSet);
+		DecisionStumps ds=new DecisionStumps(trainingSet); 
 		
 		ArrayList<Point> plotPoints;
 		for(int t=0;t<ITERATION_ROUND;t++){
