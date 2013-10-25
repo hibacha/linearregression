@@ -11,7 +11,7 @@ public class AUC {
 					* (plotPoints.get(i).getY() + plotPoints.get(i - 1).getY());
 		}
 		double auc = sum * 0.5;
-		System.out.println("AUC:" + auc);
+		System.out.println("\tAUC:" + auc);
 		return auc;
 	}
 }

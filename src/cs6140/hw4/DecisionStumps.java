@@ -38,7 +38,7 @@ public class DecisionStumps {
 	}
 	
 	//sort training set using data Id to make it consistent with distribution
-	private void backToOriginalTrainingSet(){
+	public void backToOriginalTrainingSet(){
 		Collections.sort(trainingSet,new EmailFeatureComparator(MyConstant.INDEX_FOR_DATA_ID));
 	}
 	

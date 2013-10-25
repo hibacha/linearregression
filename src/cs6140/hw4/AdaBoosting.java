@@ -39,7 +39,7 @@ public class AdaBoosting {
 		double errorNum = 0;
 		for (Email e : testingSet) {
 			double tau = predictAEmail(e, params);
-			e.set(e.size() - 1, tau);
+			e.set(MyConstant.INDEX_FOR_TAU, tau);
 			if (!isPredictRight(tau, e.get(MyConstant.INDEX_EMAIL_SPAM_LABEL))) {
 				errorNum++;
 			}

@@ -33,13 +33,16 @@ public class Runner {
 			// using randomly select stump decison
 //			Solution globalOptimum = ds.getRandomOptimalSolution();
 			
-		   	System.out.println("Round"+t+":"+globalOptimum.toString());
+		   	//System.out.print("Round"+t+":"+globalOptimum.toString());
+		   	System.out.print(t+",");
 		   	params.add(globalOptimum);
 		   	Vector<Double> newD = AdaBoosting.updateD(globalOptimum, ds.getD(), trainingSet);
 		   	ds.setD(newD);
 		   	
-		   	double errorNum = AdaBoosting.testDataSet(testingSet, params);
-		   	System.out.println("testErrorRate:"+errorNum/testingSet.size());
+		   	double tesingErrorNum = AdaBoosting.testDataSet(testingSet, params);
+		   	double trainingErrorNum = AdaBoosting.testDataSet(trainingSet, params);
+		   	System.out.print("\ttestErrorRate:"+tesingErrorNum/testingSet.size());
+		  	System.out.print("\ttrainingErrorRate:"+trainingErrorNum/trainingSet.size());
 		   	
 		   	plotPoints = ROC.plotROC(testingSet);
 		   	double currentAuc = AUC.calAUC(plotPoints);
@@ -67,6 +70,8 @@ public class Runner {
 				trainingSet.get(i).set(MyConstant.INDEX_EMAIL_SPAM_LABEL, -1.0);
 			}
 			trainingSet.get(i).add(new Double(i));
+			//set placeholder for tau
+			trainingSet.get(i).add(new Double(0));
 		}
 	}
 }
