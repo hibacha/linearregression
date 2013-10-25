@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 import cs6140.hw4.Email;
@@ -50,6 +51,34 @@ public class DecisionStumps {
 		return extractOptimalSolution(container);
 	}
 	
+	//randomly select decision stumps
+	public Solution getRandomOptimalSolution(){
+	   Random r=new Random();
+	  
+	   int sum=0;
+	   Solution solution=null;
+	   for (int i = 0; i < this.allFeatureToThresholdsDic.size(); i++) {
+		  sum+=allFeatureToThresholdsDic.get(i).size();
+	   }
+	   int chosenIndex = r.nextInt(sum);
+	   int scannedIndexStart = 0;
+	   for(int i = 0; i < this.allFeatureToThresholdsDic.size(); i++){
+		  
+		  Vector<ThresholdToErrorItem>  thresholdsOfOneFeature = allFeatureToThresholdsDic.get(i);
+		  if(scannedIndexStart+thresholdsOfOneFeature.size()-1<chosenIndex){
+			 scannedIndexStart+=thresholdsOfOneFeature.size();
+		  }else {
+			  ThresholdToErrorItem item=thresholdsOfOneFeature.get(chosenIndex-scannedIndexStart);
+			  solution = new Solution(item.getFeatureIndex(), 
+					  				  item.errorRate(distribution), 
+					  				  item.getThreshold(), 
+					  				  (double)item.getErrorIds().size()/trainingSet.size());
+			  break;
+		  }
+	   }
+	   
+	   return solution;
+	}
 	//get optimal solution by given feature
 	public Solution getOptimalSolutionOfOneFeature(int featureIndex){
 		Vector<ThresholdToErrorItem> thresholds = allFeatureToThresholdsDic.get(featureIndex);
