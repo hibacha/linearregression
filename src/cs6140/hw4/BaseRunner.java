@@ -3,9 +3,9 @@ package cs6140.hw4;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class Runner {
-    public static final int  ITERATION_ROUND = 5000;
-	public static void main(String[] args) {
+public class BaseRunner {
+    public static final int  ITERATION_ROUND_MAX = 50000;
+	public static void run(boolean isOptimal) {
 		//partition entire dataset into 10 folds
 		KCrossValidation k = new KCrossValidation(10);
 		
@@ -24,17 +24,20 @@ public class Runner {
 
 		DecisionStumps ds=new DecisionStumps(trainingSet); 
 		ds.getRandomOptimalSolution();
-		ArrayList<Point> plotPoints;
+		ArrayList<Point> plotPoints=null;
 		double previousAuc=0;
 		ConvergenceJudge c=new ConvergenceJudge(30, 0.0001);
-		for(int t=0;t<ITERATION_ROUND;t++){
-			Solution globalOptimum = ds.getGlobalOptimalSolution();
-			
-			// using randomly select stump decison
-//			Solution globalOptimum = ds.getRandomOptimalSolution();
-			
+		for(int t=0;t<ITERATION_ROUND_MAX;t++){
+			Solution globalOptimum;
+
+			if (isOptimal) {
+				globalOptimum = ds.getGlobalOptimalSolution();
+			} else {
+				// using randomly select stump decison
+				globalOptimum = ds.getRandomOptimalSolution();
+			}
 		   	//System.out.print("Round"+t+":"+globalOptimum.toString());
-		   	System.out.print(t+",");
+		   	System.out.print(t+","+globalOptimum.getErrorRateWeighted()+"\t");
 		   	params.add(globalOptimum);
 		   	Vector<Double> newD = AdaBoosting.updateD(globalOptimum, ds.getD(), trainingSet);
 		   	ds.setD(newD);
@@ -51,6 +54,9 @@ public class Runner {
 		   	}
 		   	previousAuc=currentAuc;
 		   	
+		}
+		for(Point p:plotPoints){
+		  System.out.println(p.toString());
 		}
 		
 	}

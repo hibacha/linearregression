@@ -8,7 +8,7 @@ public final class MyConstant {
 	public static final Integer INDEX_EMAIL_SPAM_LABEL=57;
 	public static final Integer SIZE_OF_NORMALIZED_FEATURE=57;
 	public static final Integer NUMS_FOLDS = 10;
-	public static final String  DATA_PATH="/Users/zhouyf/Stack/machine learning/homework/hw2/spambase/spambase.data";
+	public static final String  DATA_PATH="/tmp/spambase.data";
 	public static final Integer INDEX_FOR_DATA_ID = 58;
 	public static final Integer INDEX_FOR_TAU=59;
     public static List<Double> OVERALLMEANARRAYLIST=Arrays.asList(
