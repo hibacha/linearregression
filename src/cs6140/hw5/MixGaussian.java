@@ -102,8 +102,12 @@ public class MixGaussian {
 		mix.readFile("/Users/zhouyf/Dropbox/machine HW/hw5/spamTeta.txt", true);
 		mix.readFile("/Users/zhouyf/Dropbox/machine HW/hw5/nonSpamTeta.txt", false);
 		mix.predictAll(testingSet);
-		//extractSeparateFeatureForAll(trainingSet);
-		//generateFileForFeature(trainingSet,56);
+
+		for (int i = 0; i < 58; i++) {
+			generateFileForFeature(trainingSet, i);
+		}
+		
+		
 	}
 	
 	
@@ -153,22 +157,6 @@ public class MixGaussian {
 		bwNonSpam.close();
 		bwNonSpam.close();
 	}
-//	private static void extractSeparateFeatureForAll(
-//			ArrayList<Email> trainingSet) {
-//		int dataIndex=0;
-//		for(Email email:trainingSet){
-//			for(int featureIndex=0;featureIndex<57;featureIndex++){
-//				if(featureContainer.size()<=featureIndex){
-//					double[] data= new double[trainingSet.size()];
-//					featureContainer.add(data);
-//					data[dataIndex]=email.get(featureIndex);
-//				}else{
-//					double[] data=featureContainer.get(featureIndex);
-//				   data[dataIndex]=email.get(featureIndex);
-//				}
-//			}
-//			dataIndex++;
-//		}
-//	}
+
 
 }
