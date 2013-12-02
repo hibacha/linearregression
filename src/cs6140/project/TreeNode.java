@@ -1,6 +1,7 @@
 package cs6140.project;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class TreeNode {
 
@@ -22,10 +23,32 @@ public class TreeNode {
     	children.put(attValue, childNode);
     }
     
-    public int getLeafNumber(){
-    	
+    public boolean isPrune(){
+    	double et=errorNumber+0.5;
+    	double eT=getLeafError()+getLeafNumber()/(double)2;
+    	double se=Math.sqrt(eT*(trainedInstancesNumber-eT)/trainedInstancesNumber);
+    	return et<=eT+se;
+    }
+    public int getLeafError(){
     	if(!isLeaf){
     		int sum=0;
+    		Iterator<TreeNode> it=children.values().iterator();
+    		while(it.hasNext()){
+    			sum+=it.next().getLeafError();
+    		}
+    		return sum;
+    	}
+    	else{
+    		return errorNumber;
+    	}
+    }
+    public int getLeafNumber(){
+    	if(!isLeaf){
+    		int sum=0;
+    		Iterator<TreeNode> it=children.values().iterator();
+    		while(it.hasNext()){
+    			sum+=it.next().getLeafNumber();
+    		}
     		return sum;
     	}
     	else{
