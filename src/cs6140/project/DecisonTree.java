@@ -105,6 +105,7 @@ public class DecisonTree {
 		
 		TreeNode node=new TreeNode();
 		node.attIndex=maxAttIndex;
+		node.mutualInfo=maxGainRatio;
 		//TODO:??????
 		Iterator<String> it=maxHashMap.keySet().iterator();
 		while(it.hasNext()){

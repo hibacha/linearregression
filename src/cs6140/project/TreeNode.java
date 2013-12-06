@@ -16,6 +16,7 @@ public class TreeNode {
 	public int trainedInstancesNumber;
 	public int errorNumber;
 	public String fakeLabel;
+	public double mutualInfo;
 	public TreeNode() {
 		// TODO Auto-generated constructor stub
 	}
