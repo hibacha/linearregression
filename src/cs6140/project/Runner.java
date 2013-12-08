@@ -33,7 +33,7 @@ public class Runner {
 				Arrays.asList(0, 1, 2, 3, 4, 5));
 		
 //		printMutualRatio(trainedNode);
-		pruneTree(trainedNode,12);
+		pruneTree(trainedNode,1);
 		printMutualRatio(trainedNode);
 
 	//	printAll(trainedNode,0);
@@ -51,6 +51,11 @@ public class Runner {
 		System.out.println(rightPrediction + " out of "+ testDataSet.size());
 		System.out.println("leaf number:"+trainedNode.getLeafNumber());
 		printArray(confusionMaxtrix);
+		
+		calAllStatistic(confusionMaxtrix,1);
+		calAllStatistic(confusionMaxtrix,2);
+		calAllStatistic(confusionMaxtrix,3);
+		
 	}
 	public static void printArray(int[][] matrix){
 		for(int i=0;i<matrix.length;i++){
@@ -60,6 +65,63 @@ public class Runner {
 			}
 			System.out.println();
 		}
+	}
+	public static double calPrecision(int[][] matrix, int classifierIndex){
+		double tp=matrix[classifierIndex][classifierIndex];
+		double sum=0;
+		for(int i=0;i<matrix.length;i++){
+			sum+=matrix[classifierIndex][i];
+		}
+		double precision=tp/sum;
+		System.out.format("precision:%.5f%n",precision);
+		return precision;
+	}
+	public static double calFPR(int[][] matrix, int classifierIndex) {
+		double negative = 0;
+		for (int i = 0; i < matrix.length; i++) {
+			if (i == classifierIndex) {
+				continue;
+			}
+			for (int j = 0; j < matrix.length; j++) {
+				negative += matrix[j][i];
+			}
+		}
+		double fp=0;
+		for(int k=0;k<matrix.length;k++){
+			if(k==classifierIndex){
+				continue;
+			}
+			fp+=matrix[classifierIndex][k];
+		}
+		double fpr=fp/negative;
+		System.out.format("fpr:%.5f%n",fpr);
+		return fpr;
+	}
+
+	public static void calAllStatistic(int[][] matrix, int label) {
+		int size = matrix.length;
+		for (int i = 0; i < size; i++) {
+			switch(label){
+			case 1:
+				calTPR(matrix, i);
+				break;
+			case 2:
+				calFPR(matrix, i);
+				break;
+			case 3:
+				calPrecision(matrix,i);
+			}
+		}
+	}
+	
+	public static double calTPR(int[][] matrix, int classifierIndex){
+		double sum=0;
+		for(int i=0;i<matrix.length;i++){
+		    sum+=matrix[i][classifierIndex];	
+		}
+		double tpr=matrix[classifierIndex][classifierIndex]/sum;
+		System.out.format("tpr:%.5f%n",tpr);
+		return tpr;
 	}
     public static String test(TreeNode decisionTree, Car testCar){
     	TreeNode current=decisionTree;
