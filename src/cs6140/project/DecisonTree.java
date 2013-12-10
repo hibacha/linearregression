@@ -54,6 +54,11 @@ public class DecisonTree {
 		return reObj;
 	}
 
+	/**
+	 * get the most frequent label according to given hash map
+	 * @param labelCounterMap
+	 * @return
+	 */
 	private String getMostFrequentLabel(HashMap<String, Integer> labelCounterMap) {
 		int maxNum=0;
 		String maxLabel="";
@@ -69,7 +74,14 @@ public class DecisonTree {
 		return maxLabel;
 	}
 	
+	/**
+	 * train model
+	 * @param trainData
+	 * @param attributeList
+	 * @return
+	 */
 	public TreeNode train(List<Car> trainData, List<Integer> attributeList) {
+		//generate leaf node when there is no attribute to use 
 		if(attributeList.size()==0){
 			TreeNode node=new TreeNode();
 			node.isLeaf=true;
@@ -79,13 +91,13 @@ public class DecisonTree {
 			return node;
 		}
 		
+		//check if data belongs to one label. If so, create leaf node
 		String preCheckLabel=checkLabel(trainData);
 		if(!preCheckLabel.equals(UNDECIDED_LABEL)){
 			return createLeafNode(preCheckLabel,trainData.size());
 		}
-		
-		///??????
 		double entropyTotal = entropy(trainData, LABEL_INDEX);
+		
 		double maxGainRatio=0;
 		HashMap<String, List<Car>> maxHashMap=null;
 		int maxAttIndex=-1;
@@ -94,8 +106,8 @@ public class DecisonTree {
 			HashMap<String, List<Car>> countMap = generateMapByGivenIndex(trainData, attIndex);
 			Double[] result = expectedEntropyByAtt(countMap,trainData.size());
 			double gainRatio=(entropyTotal-result[0])/result[1];
-//			double gainRatio=(entropyTotal-result[0]);
-			System.out.println(attIndex+" gain ratio :"+gainRatio);
+			//System.out.println(attIndex+" gain ratio :"+gainRatio);
+			//update max attribute index
 			if(gainRatio>=maxGainRatio){
 				maxGainRatio=gainRatio;
 				maxAttIndex=attIndex;
@@ -106,8 +118,8 @@ public class DecisonTree {
 		TreeNode node=new TreeNode();
 		node.attIndex=maxAttIndex;
 		node.mutualInfo=maxGainRatio;
-		//TODO:??????
 		Iterator<String> it=maxHashMap.keySet().iterator();
+		//recursively create subtree, then link with its parent
 		while(it.hasNext()){
 			String branchAttValue = it.next();
 			List<Car>  dividedTrainData= maxHashMap.get(branchAttValue);
@@ -126,7 +138,6 @@ public class DecisonTree {
 	}
 
 
-	
 	private TreeNode createLeafNode(String preCheckLabel,int instanceNumber) {
 		TreeNode node=new TreeNode();
 		node.isLeaf=true;
@@ -158,7 +169,7 @@ public class DecisonTree {
 			double probability =((double)listOfCarInOneValue.size()/total);
 			expectedSum+=probability*entropy(listOfCarInOneValue, LABEL_INDEX);
 			if(probability==1){
-			 System.err.println("error");
+			  System.out.println("Please check. Should be handled before.");
 			}
 			splitInfo+=-1*probability*log2(probability);
 		}
@@ -167,10 +178,16 @@ public class DecisonTree {
 		result[1]=splitInfo;
 		return result;
 	}
+	
+	/**
+	 * calculate entropy 
+	 * @param data
+	 * @param indexOfKey for marking class label
+	 * @return
+	 */
 	public double entropy(List<Car> data,int indexOfKey) {
 		HashMap<String, List<Car>> countMap = generateMapByGivenIndex(data,
 				indexOfKey);
-
 		Set<String> labels = countMap.keySet();
 		int[] nums = new int[labels.size()];
 		Iterator<String> it = labels.iterator();
@@ -180,14 +197,15 @@ public class DecisonTree {
 			nums[index] = count4label;
 			index++;
 		}
-
-//		for (int a : nums) {
-//			System.out.println("a:" + a);
-//		}
-
 		return entropyHelper(nums,data.size());
 	}
-
+    
+	/**
+	 * generate hashmap attribute to list of cars
+	 * @param data
+	 * @param indexOfAtrribute
+	 * @return
+	 */
 	private HashMap<String, List<Car>> generateMapByGivenIndex(List<Car> data,
 			int indexOfAtrribute) {
 		HashMap<String, List<Car>> countMap = new HashMap<String, List<Car>>();
@@ -206,7 +224,6 @@ public class DecisonTree {
 	}
 
 	private double entropyHelper(int[] nums, int total) {
-
 		double entropySum = 0;
 		for (int i : nums) {
 			double p = (double) i / total;
@@ -218,5 +235,4 @@ public class DecisonTree {
 	private double log2(double a) {
 		return Math.log10(a) / Math.log10(2);
 	}
-
 }

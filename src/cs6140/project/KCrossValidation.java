@@ -13,7 +13,7 @@ import cs6140.project.Car;
 
 public class KCrossValidation {
 
-	public static String PATH="/Users/zhouyf/Dropbox/machine HW/finalProject/car.data";
+	//public static String PATH="/Users/zhouyf/Dropbox/machine HW/finalProject/car.data";
 	public ArrayList<Car> getRandomTrainingData(){
 	      ArrayList<Car> result=new ArrayList<Car>();
 	      Random r=new Random();
@@ -55,9 +55,9 @@ public class KCrossValidation {
 	private ArrayList<Car> trainingData = new ArrayList<Car>();
 	private ArrayList<Car> testingData = new ArrayList<Car>();
 
-	public KCrossValidation(int k) {
+	public KCrossValidation(int k, String path) {
 		this.k = k;
-		readFromGivenURL(PATH);
+		readFromGivenURL(path);
 	}
 
 	private void readFromGivenURL(String url)  {
@@ -88,14 +88,6 @@ public class KCrossValidation {
 			if(features.length!=7){
 				System.err.println("check format not enough value");
 			}
-			
-//			car.setBuying(Level.generateEnumByString(features[0]));
-//			car.setMaint(Level.generateEnumByString(features[1]));
-//			car.setDoors(Number.generateEnumByString(features[2]));
-//			car.setPersons(Number.generateEnumByString(features[3]));
-//			car.setLug(Size.generateEnumByString(features[4]));
-//			car.setSafety(Level.generateEnumByString(features[5]));
-//			car.setCarClass(CarClass.generateEnumByString(features[6]));
 			
 			for (String strFrequency : features) {
 				vec_features.add(strFrequency);

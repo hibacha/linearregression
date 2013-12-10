@@ -20,9 +20,13 @@ public class Runner {
 		classMapToIndex.put("vgood", 2);
 		classMapToIndex.put("good", 3);
 	}
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		KCrossValidation k = new KCrossValidation(10);
+		if(args.length!=1){
+			System.err.println("Please give your data file path as first parameter!");
+			System.exit(1);
+		}
+		KCrossValidation k = new KCrossValidation(10,args[0]);
 		k.extractTestingSetByIndex(0);
 
 		List<Car> trainingDataSet = k.getTrainingData();
@@ -32,11 +36,7 @@ public class Runner {
 		TreeNode trainedNode = decision.train(trainingDataSet,
 				Arrays.asList(0, 1, 2, 3, 4, 5));
 		
-//		printMutualRatio(trainedNode);
-		pruneTree(trainedNode,1);
-		printMutualRatio(trainedNode);
-
-	//	printAll(trainedNode,0);
+		pruneTree(trainedNode,2);
 		
 		int rightPrediction = 0;
 		for (int i = 0; i < testDataSet.size(); i++) {
@@ -57,6 +57,11 @@ public class Runner {
 		calAllStatistic(confusionMaxtrix,3);
 		
 	}
+	
+	/**
+	 * print our confusion matrix 
+	 * @param matrix
+	 */
 	public static void printArray(int[][] matrix){
 		for(int i=0;i<matrix.length;i++){
 			for (int j = 0; j < matrix[i].length; j++) {
@@ -66,6 +71,13 @@ public class Runner {
 			System.out.println();
 		}
 	}
+	
+	/**
+	 * calculate precision
+	 * @param matrix
+	 * @param classifierIndex
+	 * @return
+	 */
 	public static double calPrecision(int[][] matrix, int classifierIndex){
 		double tp=matrix[classifierIndex][classifierIndex];
 		double sum=0;
@@ -76,6 +88,13 @@ public class Runner {
 		System.out.format("precision:%.5f%n",precision);
 		return precision;
 	}
+	
+	/**
+	 * calculate false positive rate
+	 * @param matrix
+	 * @param classifierIndex
+	 * @return
+	 */
 	public static double calFPR(int[][] matrix, int classifierIndex) {
 		double negative = 0;
 		for (int i = 0; i < matrix.length; i++) {
@@ -114,6 +133,12 @@ public class Runner {
 		}
 	}
 	
+	/**
+	 * calculate true positive rate
+	 * @param matrix
+	 * @param classifierIndex
+	 * @return
+	 */
 	public static double calTPR(int[][] matrix, int classifierIndex){
 		double sum=0;
 		for(int i=0;i<matrix.length;i++){
@@ -123,6 +148,13 @@ public class Runner {
 		System.out.format("tpr:%.5f%n",tpr);
 		return tpr;
 	}
+	
+	/**
+	 * 
+	 * @param decisionTree
+	 * @param testCar
+	 * @return predicted label
+	 */
     public static String test(TreeNode decisionTree, Car testCar){
     	TreeNode current=decisionTree;
     	while(!current.isLeaf){
@@ -135,6 +167,11 @@ public class Runner {
     	return current.label;
     } 
     
+    /**
+     * prune tree base on given error number
+     * @param node
+     * @param errorNumTreshold
+     */
     public static void pruneTree(TreeNode node, int errorNumTreshold){
     	if(!node.isLeaf){
     		boolean isPrune=node.isPrune();
@@ -149,6 +186,11 @@ public class Runner {
     		}
     	}
     }
+    
+    /**
+     * transform node into leaf 
+     * @param node
+     */
 	private static void transformIntoLeaf(TreeNode node) {
 		node.label=node.fakeLabel;
 		node.isLeaf=true;
@@ -170,6 +212,11 @@ public class Runner {
 		}
 	}
 	
+	/**
+	 * print out the tree structure
+	 * @param node
+	 * @param indent
+	 */
 	public static void printAll(TreeNode node, int indent) {
 		if (!node.isLeaf) {
 			boolean isPrune=node.isPrune();
@@ -186,6 +233,11 @@ public class Runner {
 		}
 	}
 
+	/**
+	 * print out the indent
+	 * @param indent
+	 * @return
+	 */
 	public static String outputIndent(int indent) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < indent; i++) {
